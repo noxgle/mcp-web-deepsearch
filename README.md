@@ -73,6 +73,113 @@ To update the image after a new release, run the same command again
 
 Additional tags on GHCR: `sha-<short>` for every commit and `v<version>` for git tags (e.g. `v1.0.0`).
 
+## Config on other clients
+
+The server works with any MCP client. Two options: **remote HTTP** (shared
+persistent container — recommended) or **stdio** (the client spawns one
+container per session). The remote HTTP option requires the persistent
+container to be running (see Quick install from GHCR above).
+
+### Claude Code
+
+Remote (HTTP) — one command:
+
+```bash
+claude mcp add --transport http web-deepsearch http://127.0.0.1:8000/mcp
+claude mcp list   # verify
+```
+
+Local (stdio):
+
+```bash
+claude mcp add --transport stdio web-deepsearch -- docker run --rm -i ghcr.io/noxgle/mcp-web-deepsearch:latest
+```
+
+Project-scoped `.mcp.json` (shared with the team):
+
+```json
+{
+  "mcpServers": {
+    "web-deepsearch": {
+      "type": "http",
+      "url": "http://127.0.0.1:8000/mcp"
+    }
+  }
+}
+```
+
+### Cursor
+
+`.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global), then enable the
+server in Cursor Settings → Tools & MCP:
+
+```json
+{
+  "mcpServers": {
+    "web-deepsearch": {
+      "url": "http://127.0.0.1:8000/mcp"
+    }
+  }
+}
+```
+
+### Visual Studio Code
+
+`.vscode/mcp.json` (workspace, commit to source control) or user profile
+(`MCP: Open User Configuration` command). Note: VS Code uses the `servers`
+key:
+
+```json
+{
+  "servers": {
+    "web-deepsearch": {
+      "type": "http",
+      "url": "http://127.0.0.1:8000/mcp"
+    }
+  }
+}
+```
+
+Stdio variant (no `-d` — the container must run in the foreground):
+
+```json
+{
+  "servers": {
+    "web-deepsearch": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "ghcr.io/noxgle/mcp-web-deepsearch:latest"]
+    }
+  }
+}
+```
+
+### Visual Studio (IDE)
+
+`<SOLUTIONDIR>\.mcp.json` or `%USERPROFILE%\.mcp.json`, same `servers` format
+as VS Code. Visual Studio also auto-discovers `.vscode/mcp.json` and
+`.cursor/mcp.json`.
+
+### Any other MCP client
+
+Remote HTTP: point the client at the local endpoint
+`http://127.0.0.1:8000/mcp` (no authentication required).
+
+Stdio (works everywhere, one container per client session):
+
+```json
+{
+  "mcpServers": {
+    "web-deepsearch": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "ghcr.io/noxgle/mcp-web-deepsearch:latest"]
+    }
+  }
+}
+```
+
+Claude Desktop only supports stdio — use the stdio form above or a proxy
+(`npx mcp-remote http://127.0.0.1:8000/mcp --transport http-only`).
+
 ## Build
 
 ```bash
