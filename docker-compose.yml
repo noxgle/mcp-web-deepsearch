@@ -1,0 +1,11 @@
+services:
+  web-deepsearch:
+    build: .
+    image: web-deepsearch-mcp
+    environment:
+      TRANSPORT: http
+      HOST: 0.0.0.0
+      PORT: "8000"
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
