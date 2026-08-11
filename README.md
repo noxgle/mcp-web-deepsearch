@@ -16,6 +16,57 @@ OpenCode, Claude Code, Cursor, custom agents, etc. It supports both local
 | `web_deepsearch` | Search the web. Args: `query` (required), `max_sources` (default 5), `deep_search` (default true), optional config overrides: `max_iterations`, `min_confidence`, `timeout`, `max_total_time`, `max_concurrent_fetches`, `max_content_length` |
 | `web_deepsearch_server_info` | Return server capabilities, tool parameters and defaults (for agent discovery) |
 
+## Quick install from GHCR
+
+A ready-built image is published to GitHub Container Registry on every push to `main`:
+
+```
+ghcr.io/noxgle/mcp-web-deepsearch:latest
+```
+
+No Docker build required — just pull and run.
+
+### stdio (local agents)
+
+```bash
+docker run --rm -i ghcr.io/noxgle/mcp-web-deepsearch:latest
+```
+
+Configure your local MCP client (e.g. OpenCode `opencode.json`):
+
+```json
+{
+  "mcp": {
+    "web-deepsearch": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "ghcr.io/noxgle/mcp-web-deepsearch:latest"]
+    }
+  }
+}
+```
+
+### streamable HTTP (remote agents)
+
+```bash
+docker run -d --name web-deepsearch -p 8000:8000 -e TRANSPORT=http ghcr.io/noxgle/mcp-web-deepsearch:latest
+```
+
+Endpoint: `http://<host>:8000/mcp`
+
+```json
+{
+  "mcp": {
+    "web-deepsearch": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp"
+    }
+  }
+}
+```
+
+Additional tags on GHCR: `sha-<short>` for every commit and `v<version>` for git tags (e.g. `v1.0.0`).
+
 ## Build
 
 ```bash
