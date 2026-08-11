@@ -48,18 +48,24 @@ Configure your local MCP client (e.g. OpenCode `opencode.json`):
 
 ### streamable HTTP (remote agents)
 
+One persistent container serves all MCP clients — recommended when running
+multiple OpenCode instances (avoids spawning one Docker container per session):
+
 ```bash
-docker run -d --name web-deepsearch -p 8000:8000 -e TRANSPORT=http ghcr.io/noxgle/mcp-web-deepsearch:latest
+docker compose pull && docker compose up -d
 ```
 
-Endpoint: `http://<host>:8000/mcp`
+Endpoint (local only): `http://127.0.0.1:8000/mcp`
+
+To update the image after a new release, run the same command again
+(`docker compose pull` fetches the new `latest`).
 
 ```json
 {
   "mcp": {
     "web-deepsearch": {
       "type": "http",
-      "url": "http://localhost:8000/mcp"
+      "url": "http://127.0.0.1:8000/mcp"
     }
   }
 }
@@ -98,12 +104,12 @@ Configure your local MCP client (e.g. OpenCode `opencode.json`):
 ### streamable HTTP (remote agents)
 
 ```bash
-docker compose up -d
+docker compose pull && docker compose up -d
 # or:
-docker run -d --name web-deepsearch -p 8000:8000 -e TRANSPORT=http web-deepsearch-mcp
+docker run -d --name web-deepsearch -p 127.0.0.1:8000:8000 -e TRANSPORT=http ghcr.io/noxgle/mcp-web-deepsearch:latest
 ```
 
-Endpoint: `http://<host>:8000/mcp`
+Endpoint (local only): `http://127.0.0.1:8000/mcp`
 
 Example client config (HTTP MCP):
 
@@ -112,7 +118,7 @@ Example client config (HTTP MCP):
   "mcp": {
     "web-deepsearch": {
       "type": "http",
-      "url": "http://localhost:8000/mcp"
+      "url": "http://127.0.0.1:8000/mcp"
     }
   }
 }
