@@ -126,6 +126,7 @@ def main() -> None:
             host=args.host,
             port=args.port,
             json_response=True,
+            stateless_http=True,
         )
     else:
         mcp.run(transport="stdio")
